@@ -122,6 +122,16 @@
         android:text="上一题" />
 
     <Button
+        android:id="@+id/btn_answer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerInParent="true"
+        android:text="查看答案"
+        />
+
+
+    <Button
         android:id="@+id/btn_next"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

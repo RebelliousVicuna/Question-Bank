@@ -25,6 +25,7 @@ public class ExamActivity extends Activity {
     private int current;
     private int mode = 0; // 单选0 多选1 判断2
     private boolean wrongMode;//标志变量，判断是否进入错题模式
+    private boolean flagAnswer;
 
     private int timeNum;
     private int singleNum;
@@ -35,6 +36,8 @@ public class ExamActivity extends Activity {
     public TextView tv_question;
     public TextView tv_remaining_time;
     public TextView user_answer;
+
+    public String nowAnswer = "";
 
     public RadioButton[] radioButtons = new RadioButton[4];
     public CheckBox checkBox1;
@@ -88,6 +91,7 @@ public class ExamActivity extends Activity {
         current = 0;
         mode = 0;
         wrongMode = false;//默认情况
+        flagAnswer = false;//默认情况
         Log.i(TAG, "onCreate: " + "Time: " + timeNum);
 //        final TextView tv_question = findViewById(R.id.question);
         tv_question = findViewById(R.id.question);
@@ -103,11 +107,15 @@ public class ExamActivity extends Activity {
 
         Button btn_previous = findViewById(R.id.btn_previous);
         Button btn_next = findViewById(R.id.btn_next);
+
+        Button btn_answer = findViewById(R.id.btn_answer);
+
         final TextView tv_explaination = findViewById(R.id.explaination);
         final TextView user_answer = findViewById(R.id.text_answer);
         final RadioGroup radioGroup = findViewById(R.id.radioGroup);
         //为控件赋值
         Question q = list.get(0);
+        nowAnswer = q.explaination;
         questionNum.setText("当前第1道题");
         tv_question.setText(q.question);
 //        tv_explaination.setText(q.explaination);
@@ -121,11 +129,16 @@ public class ExamActivity extends Activity {
         checkBox4.setVisibility(View.GONE);
 
         btn_next.setOnClickListener(view -> {
+            flagAnswer=false;
+            tv_explaination.setVisibility(View.GONE);
             if (current < count - 1) {//若当前题目不为最后一题，点击next按钮跳转到下一题；否则不响应
                 current++;
                 questionNumber = current + 1;
                 Question q12 = list.get(current);
                 mode = q12.mode;
+
+                nowAnswer = q12.explaination;
+
                 if (mode == 0) {
                     Log.i(TAG, "NextMode: 0");
                     // 单选题
@@ -144,6 +157,7 @@ public class ExamActivity extends Activity {
                     checkBox4.setVisibility(View.GONE);
                     if (wrongMode) {
                         tv_explaination.setText(q12.explaination);
+                        tv_explaination.setVisibility(View.VISIBLE);
                         user_answer.setText(getUserAnswer(q12.selectedAnswer));
                         user_answer.setVisibility(View.VISIBLE);
                         Log.i(TAG, "next" + " " + q12.explaination);
@@ -168,6 +182,7 @@ public class ExamActivity extends Activity {
                     checkBox4.setVisibility(View.GONE);
                     if (wrongMode) {
                         tv_explaination.setText(q12.explaination);
+                        tv_explaination.setVisibility(View.VISIBLE);
                         user_answer.setText(getUserAnswer(q12.selectedAnswer));
                         user_answer.setVisibility(View.VISIBLE);
                         Log.i(TAG, "next" + " " + q12.explaination);
@@ -198,6 +213,7 @@ public class ExamActivity extends Activity {
                     checkBox4.setVisibility(View.VISIBLE);
                     if (wrongMode) {
                         tv_explaination.setText(q12.explaination);
+                        tv_explaination.setVisibility(View.VISIBLE);
                         user_answer.setText(getUserAnswer(q12.selectedAnswer));
                         user_answer.setVisibility(View.VISIBLE);
                         Log.i(TAG, "next" + " " + q12.explaination);
@@ -390,6 +406,7 @@ public class ExamActivity extends Activity {
             }
         });
         btn_previous.setOnClickListener(view -> {
+            tv_explaination.setVisibility(View.GONE);
             if (current > 0)//若当前题目不为第一题，点击previous按钮跳转到上一题；否则不响应
             {
                 current--;
@@ -397,6 +414,9 @@ public class ExamActivity extends Activity {
                 Question q1 = list.get(current);
                 tv_question.setText(q1.question);
                 questionNum.setText("当前第" + questionNumber + "道题");
+
+                nowAnswer = q1.explaination;
+
                 if (q1.mode == 0) {
                     Log.i(TAG, "LastMode: 0");
                     radioButtons[0].setText(q1.answerA);
@@ -413,6 +433,7 @@ public class ExamActivity extends Activity {
                     checkBox4.setVisibility(View.GONE);
                     if (wrongMode) {
                         tv_explaination.setText(q1.explaination);
+                        tv_explaination.setVisibility(View.VISIBLE);
                         user_answer.setText(getUserAnswer(q1.selectedAnswer));
                         user_answer.setVisibility(View.VISIBLE);
                         Log.i(TAG, "last" + " " + q.explaination);
@@ -440,6 +461,7 @@ public class ExamActivity extends Activity {
                     checkBox4.setVisibility(View.GONE);
                     if (wrongMode) {
                         tv_explaination.setText(q1.explaination);
+                        tv_explaination.setVisibility(View.VISIBLE);
                         user_answer.setText(getUserAnswer(q1.selectedAnswer));
                         user_answer.setVisibility(View.VISIBLE);
                         Log.i(TAG, "last" + " " + q.explaination);
@@ -471,6 +493,7 @@ public class ExamActivity extends Activity {
                     checkBox4.setVisibility(View.VISIBLE);
                     if (wrongMode) {
                         tv_explaination.setText(q1.explaination);
+                        tv_explaination.setVisibility(View.VISIBLE);
                         user_answer.setText(getUserAnswer(q1.selectedAnswer));
                         user_answer.setVisibility(View.VISIBLE);
                         Log.i(TAG, "next" + " " + q1.explaination);
@@ -544,6 +567,16 @@ public class ExamActivity extends Activity {
             }
 
         });
+
+        btn_answer.setOnClickListener(view -> {
+//            if(flg)
+            tv_explaination.setText(nowAnswer);
+            tv_explaination.setVisibility(View.VISIBLE);
+//            user_answer.setVisibility(View.VISIBLE);
+//            user_answer.setText(nowAnswer);
+            Log.i(TAG, "BTN_Answer : " + nowAnswer);
+        });
+
         //选择选项时更新选择
         radioGroup.setOnCheckedChangeListener((radioGroup1, checkedId) -> {
             for (int i = 0; i < 4; i++) {
